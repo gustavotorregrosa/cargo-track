@@ -2,31 +2,19 @@ import React, {Component} from 'react';
 import { Route, Switch, withRouter, Redirect } from 'react-router'
 import { connect } from 'react-redux'
 import * as actions from './store/actions/index'
+import InitialScreen from './components/initialScreen/initialScreen'
 
 class App extends Component {
 
-  componentDidMount(){
-    setInterval(() => {
-      console.log(this.props.user)
-    }, 1000)
-
-    setTimeout(() => {
-      this.props.login({
-        name: 'gustavo'
-      })
-    }, 3000)
-
-    setTimeout(() => {
-      this.props.logout()
-    }, 7000)
-  }
+  routes = (
+    <Switch>
+      <Route path="/" exact component={InitialScreen}/>
+    </Switch>
+  )
 
   render(){
-    return (<h2>ola mundo</h2>)
+    return this.routes
   }
-
-
-
 }
 
 const mapStateToProps = state => {

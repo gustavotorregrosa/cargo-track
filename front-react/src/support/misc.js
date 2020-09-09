@@ -1,0 +1,1 @@
+export const url = path => 'http://localhost:3001/' + path
