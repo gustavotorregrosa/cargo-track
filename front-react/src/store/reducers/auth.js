@@ -6,6 +6,7 @@ const initialState = {
 }
 
 const login = (state, action) => {
+    localStorage.setItem("user", JSON.stringify(action.data))
     return updateObject(state, {
         user: { ...action.data }
     })
@@ -13,6 +14,7 @@ const login = (state, action) => {
 
 
 const logout = state => {
+    localStorage.removeItem('user')
     return updateObject(state, {
         user: {}
     })

@@ -1,6 +1,5 @@
-// const sequelize = require('../util/database')
+const sequelize = require('../util/database')
 const { Sequelize, DataTypes } = require('sequelize')
-const sequelize = new Sequelize('postgres://postgres:gustavo01@localhost:15432/cargotrack')
 
 const User = sequelize.define('User', {
     id: {
@@ -14,12 +13,21 @@ const User = sequelize.define('User', {
     },
     email: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
     password: {
         type: DataTypes.STRING,
         allowNull: false
-    }
+    },
+    refreshToken: {
+        type: DataTypes.STRING,
+        
+    },
+    refreshTokenValidity: {
+        type: DataTypes.DATE,
+        
+    },
 }, {
     instanceMethods: {
         toJSON: function () {

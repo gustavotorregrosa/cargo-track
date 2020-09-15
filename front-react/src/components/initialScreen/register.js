@@ -43,6 +43,9 @@ class Register extends Component {
     openModal = () => {
         this.instance.open()
         M.updateTextFields()
+        this.setState({
+            loading: false
+        })
     }
 
     alterField = (e, fieldName) => {
@@ -55,6 +58,9 @@ class Register extends Component {
 
     register = e => {
         e.preventDefault()
+        this.setState({
+            loading: true
+        })
         let myHeaders = new Headers
         myHeaders.set("Content-Type", "application/json")
         fetch(url('auth/register'), {
@@ -62,7 +68,13 @@ class Register extends Component {
             body: JSON.stringify({...this.state.user}),
             headers: myHeaders,
             mode:  'cors',
-        }).then(r => r.json()).then(user => console.log(user))
+        }).then(r => r.json()).then(user => {
+            this.props.login(user)
+            this.setState({
+                loading: false
+            })
+            this.instance.close()
+        })
 
     }
 

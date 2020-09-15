@@ -8,9 +8,17 @@ class App extends Component {
 
   routes = (
     <Switch>
-      <Route path="/" exact component={InitialScreen}/>
+      <Route path="/start" exact component={InitialScreen}/>
     </Switch>
   )
+
+  componentDidMount(){
+//     if(this.props.user.email){
+//         this.props.history.push('/logged')
+//     }
+    this.props.history.push('/start')
+  }
+
 
   render(){
     return this.routes

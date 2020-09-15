@@ -1,6 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-// const sequelize = require('./util/database')
+const migrate = require('./util/migrations')
 const app = express()
 const port = 3001
 
@@ -17,5 +17,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/auth', authRoutes)
+
+migrate()
 
 app.listen(port)

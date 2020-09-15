@@ -3,6 +3,7 @@ import 'materialize-css/dist/css/materialize.min.css'
 import M from 'materialize-css'
 import { connect } from 'react-redux'
 import * as actions from '../../store/actions/index'
+import { url } from '../../support/misc'
 
 class Login extends Component {
 
@@ -18,6 +19,9 @@ class Login extends Component {
     openModal = () => {
         this.instanceModal.open()
         M.updateTextFields()
+        this.setState({
+            loading: false
+        })
     }
 
     componentDidMount(){
@@ -45,6 +49,23 @@ class Login extends Component {
     login = e => {
         e.preventDefault()
         console.log(this.state)
+        this.setState({
+            loading: true
+        })
+        let myHeaders = new Headers
+        myHeaders.set("Content-Type", "application/json")
+        fetch(url('auth/login'), {
+            method: 'post',
+            body: JSON.stringify({...this.state.user}),
+            headers: myHeaders,
+            mode:  'cors',
+        }).then(r => r.json()).then(user => {
+            this.props.login(user)
+            this.setState({
+                loading: false
+            })
+            this.instanceModal.close()
+        })
     }
 
     render() {
@@ -75,6 +96,12 @@ class Login extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+      user: state.auth.user
+    }
+  }
+
 const mapDispatchToProps = dispatch => {
     return {
         login: (user) => dispatch(actions.login(user)),
@@ -82,4 +109,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(null, mapDispatchToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
