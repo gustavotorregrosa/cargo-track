@@ -2,13 +2,20 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavBar from './navBar'
 
-class InitialScreen extends Component {
+class LoggedScreen extends Component {
 
     render(){
         return (
-           <NavBar />
+            <div>
+                <NavBar />
+                <h3>ola mundo</h3>
+            </div>
+          
+
+           
         )
     }
+
 }
 
 
@@ -18,4 +25,4 @@ const mapStateToProps = state => {
     }
   }
 
-export default connect(mapStateToProps)(InitialScreen)
+export default connect(mapStateToProps)(LoggedScreen)

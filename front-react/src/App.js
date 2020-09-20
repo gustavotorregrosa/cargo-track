@@ -3,22 +3,31 @@ import { Route, Switch, withRouter, Redirect } from 'react-router'
 import { connect } from 'react-redux'
 import * as actions from './store/actions/index'
 import InitialScreen from './components/initialScreen/initialScreen'
+import LoggedScreen from './components/loggedScreen/loggedScreen'
 
 class App extends Component {
 
   routes = (
     <Switch>
       <Route path="/start" exact component={InitialScreen}/>
+      <Route path="/" exact component={LoggedScreen}/>
     </Switch>
   )
 
+
   componentDidMount(){
-//     if(this.props.user.email){
-//         this.props.history.push('/logged')
-//     }
-    this.props.history.push('/start')
+    this.redirectToProperPage()
   }
 
+  redirectToProperPage = () => {
+    let user = localStorage.getItem('user')
+    if(!user){
+      this.props.history.push('/start')
+      return
+    }
+    this.props.login(user)
+    this.props.history.push('/')
+  }
 
   render(){
     return this.routes

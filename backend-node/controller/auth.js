@@ -1,101 +1,135 @@
 const User = require('../model/User')
-const {Sequelize, DataTypes } = require('sequelize')
+const { Sequelize, DataTypes } = require('sequelize')
 const bcrypt = require('bcryptjs');
 const sequelize = require('../util/database')
 const jwt = require('jsonwebtoken')
-const crypto = require('crypto')
+const crypto = require('crypto');
+
 
 exports.login = (req, res, next) => {
-    const userEmail = req.body.email
+    const email = req.body.email
     const password = req.body.password
-    const errorMsg = 'Invalid user/password'
-    User.findOne({
-        where: {
-            email: userEmail
-        }
-    }).then(user => {
-        return new Promise((resolve, error) => {
-            bcrypt.compare(password ,user.password, (err, success) => {
-                if(err){
-                    throw new Error(errorMsg)
-                }
 
-                resolve(user)
+
+    getUser(email, password).then(user => {
+        let safeUser = safeObj(user)
+        getToken(safeUser).then(tokenUser => {
+            let userJWT = generateJWT(tokenUser)
+           return res.send(userJWT)
+        })
+    }).catch(e => {
+            res.status(401).send({
+                message: "Invalid user/password"
             })
         })
-    }).
-    
-    then(user => {
-        if(!user) {
-            throw new Error(errorMsg)
-        }
-        let userFound = {
-            ...user.dataValues,
-        }
-        delete userFound.password
-        userFound.jwt = jwt.sign({...userFound},'gustavo', {
-            expiresIn: 500
-        })
-        let refreshToken = crypto.createHash('sha1').update(
-            (new Date()).valueOf().toString() + Math.random().toString()
-        ).digest('hex')
-        userFound.refreshToken = refreshToken
-        let refreshTokenValidity = new Date()
-        refreshTokenValidity.setHours(refreshTokenValidity.getHours() + 2)
-    
-        return new Promise((success, reject) => {
-            User.update({
-                refreshToken,
-                refreshTokenValidity
-            }, {where: {
-                email: userEmail
-            }}).then(user => success(userFound) )
-
-        })
-
-       
-    
-    })
-    .then(user => {
-        res.send(user)
-    }).    
-    catch(e => {
-        res.send(e.message)
-    })
 }
 
-
 exports.register = (req, res, next) => {
-    const email = req.body.email
-    const name = req.body.name
-    const password = req.body.password
-    
-    bcrypt.hash(password, 12).then(hashedPassword => {
-        let refreshToken
-        refreshToken = crypto.createHash('sha1').update(
-            (new Date()).valueOf().toString() + Math.random().toString()
-        ).digest('hex')
+    generateUserPassword({...req.body}).then(user => {
+        return getToken(user).then(user => { 
+           
+            User.findOne({
+                where: {
+                    id: user.dataValues.id
+                }
+            }).then(completeUser => {
+                let completeUserData = {
+                    ...completeUser.dataValues
+                }
+                delete completeUserData.password
+                let userJWT = generateJWT(completeUserData)
+                return res.send(userJWT)
+            })
+            
+        })
+    }).catch(e => {
+        res.status(401).send({
+            message: "Error creating user"
+        })
+    })
 
-        let refreshTokenValidity = new Date()
-        refreshTokenValidity.setHours(refreshTokenValidity.getHours() + 2)
-        
+
+}
+
+const generateUserPassword = ({email, name, password}) => new Promise((success, reject) => {
+    bcrypt.hash(password, 12).then(hashedPassword => {
         return User.create({
             email,
             name,
             password: hashedPassword,
-            refreshToken,
-            refreshTokenValidity
+        }).then(user => success(user)).catch(e => {
+            reject(e)
+        })
+        
+    })
+})
 
-        })
-    }).then(user => {
-        let safeUser = {
-            ...user.dataValues
+const getUser = (email, password) => new Promise((success, reject) => {
+    User.findOne({
+        where: {
+            email
         }
-        delete safeUser.password
-        safeUser.jwt = jwt.sign({...safeUser},'gustavo', {
-            expiresIn: 500
+    }).then(user => {
+        bcrypt.compare(password, user.password, (err, pass) => {
+            if (err || !pass) {
+                reject(false)
+            }
+            success(user)
         })
-        return safeUser
-    }).then(user => res.send(user))
+    }).catch(e => {
+        reject(false)
+    })
+})
+
+const safeObj = user => {
+    let safeUser = {
+        ...user.dataValues
+    }
+    delete safeUser.password
+    delete safeUser.refreshToken
+    delete safeUser.refreshTokenValidity
+    return safeUser
+
 }
+
+const getToken = user => new Promise((success, reject) => {
+    let refreshToken = crypto.createHash('sha1').update(
+        (new Date()).valueOf().toString() + Math.random().toString()
+    ).digest('hex')
+
+    let refreshTokenValidity = new Date()
+    refreshTokenValidity.setHours(refreshTokenValidity.getHours() + 2)
+
+    User.update({
+        refreshToken,
+        refreshTokenValidity
+    }, {
+        where: {
+            email: user.email
+        }
+    }).then(u => {
+        userComplete = {
+            ...user,
+            refreshToken,
+            refreshTokenValidity,
+        }
+
+        return success(userComplete)
+    
+    })
+
+})
+
+generateJWT = user => {
+    let userData = {
+        ...user
+    }
+    delete userData.refreshToken
+    delete userData.refreshTokenValidity
+    return {
+        ...user,
+        jwt: jwt.sign({...userData}, process.env.JWT_KEY)
+    }
+}
+ 
 

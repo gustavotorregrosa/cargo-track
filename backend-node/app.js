@@ -6,6 +6,7 @@ const port = 3001
 
 const authRoutes = require('./routes/auth')
 const { response } = require('express')
+require('dotenv').config()
 
 app.use(bodyParser.json())
 

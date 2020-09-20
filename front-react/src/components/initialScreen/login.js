@@ -48,7 +48,7 @@ class Login extends Component {
 
     login = e => {
         e.preventDefault()
-        console.log(this.state)
+
         this.setState({
             loading: true
         })
@@ -59,8 +59,19 @@ class Login extends Component {
             body: JSON.stringify({...this.state.user}),
             headers: myHeaders,
             mode:  'cors',
-        }).then(r => r.json()).then(user => {
+        }).then(r => {
+            if(r.status == 401){
+                throw new Error()
+            }
+            return r.json()
+        }).then(user => {
             this.props.login(user)
+            M.toast({html: 'User ' + user.email + ' logged in'})
+            this.props.history.push('/')
+           
+        }).catch(e => {
+            M.toast({html: 'Unauthorized'})
+        }).finally(() => {
             this.setState({
                 loading: false
             })
