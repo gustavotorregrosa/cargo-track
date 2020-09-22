@@ -6,6 +6,30 @@ const jwt = require('jsonwebtoken')
 const crypto = require('crypto');
 
 
+exports.renew = (req, res, next) => {
+    const email = req.body.email
+    const refreshToken = req.body.refreshToken
+ 
+
+    User.findOne({
+        where: {
+            email,
+            refreshToken
+        }
+    }).then(completeUser => {
+        let completeUserData = {
+            ...completeUser.dataValues
+        }
+        delete completeUserData.password
+        let userJWT = generateJWT(completeUserData)
+        return res.send(userJWT)
+    })
+
+}
+
+
+
+
 exports.login = (req, res, next) => {
     const email = req.body.email
     const password = req.body.password

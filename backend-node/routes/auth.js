@@ -7,4 +7,6 @@ router.post('/login', authController.login)
 
 router.post('/register', authController.register)
 
+router.post('/renew', authController.renew)
+
 module.exports = router

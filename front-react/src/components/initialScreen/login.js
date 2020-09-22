@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import { withRouter } from 'react-router'
 import 'materialize-css/dist/css/materialize.min.css'
 import M from 'materialize-css'
 import { connect } from 'react-redux'
@@ -120,4 +121,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Login)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login))

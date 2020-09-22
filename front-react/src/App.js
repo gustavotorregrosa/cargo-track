@@ -8,10 +8,11 @@ import LoggedScreen from './components/loggedScreen/loggedScreen'
 class App extends Component {
 
   routes = (
-    <Switch>
-      <Route path="/start" exact component={InitialScreen}/>
-      <Route path="/" exact component={LoggedScreen}/>
-    </Switch>
+       <Switch>
+          <Route path="/start" exact component={InitialScreen}/>
+          <Route path="/" exact component={LoggedScreen}/>
+      </Switch>
+ 
   )
 
 
@@ -20,7 +21,7 @@ class App extends Component {
   }
 
   redirectToProperPage = () => {
-    let user = localStorage.getItem('user')
+    let user = JSON.parse(localStorage.getItem('user'))
     if(!user){
       this.props.history.push('/start')
       return

@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import 'materialize-css/dist/css/materialize.min.css'
+import { withRouter } from 'react-router'
 import M from 'materialize-css'
 import { connect } from 'react-redux'
 import * as actions from '../../store/actions/index'
@@ -47,6 +48,7 @@ class Logout extends Component {
         setTimeout(() => {
             this.props.logout()
             this.instanceModal.close()
+            this.props.history.push('/start')
             M.toast({html: 'User logged out'})
 
         }, 1000)
@@ -87,4 +89,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Logout)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Logout))
