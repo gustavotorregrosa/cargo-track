@@ -5,6 +5,8 @@ const app = express()
 const port = 3001
 
 const authRoutes = require('./routes/auth')
+const categoryRoutes = require('./routes/category')
+const productRoutes = require('./routes/product')
 const { response } = require('express')
 require('dotenv').config()
 
@@ -18,6 +20,9 @@ app.use((req, res, next) => {
 });
 
 app.use('/auth', authRoutes)
+app.use('/categories', categoryRoutes)
+app.use('/products', productRoutes)
+
 
 migrate()
 

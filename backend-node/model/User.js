@@ -35,7 +35,10 @@ const User = sequelize.define('User', {
           delete values.password;
           return values;
         }
-      }
+      },
+     
+    freezeTableName: true
+    
 })
 
 module.exports = User

@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import NavBar from './navBar'
+import { Route, Switch, withRouter, Redirect } from 'react-router-dom'
+import Categories from './categories/categories'
 
 class LoggedScreen extends Component {
 
@@ -8,7 +10,18 @@ class LoggedScreen extends Component {
         return (
             <div>
                 <NavBar />
-                <h3>ola mundo</h3>
+                <br/>
+                <br/>
+                <br/>
+                <div className="container">
+                    <Switch>
+                        <Route path="/categories" component={Categories} />
+                        <Redirect from="/*" to="/" />
+                    </Switch>
+                </div>
+              
+                
+                
             </div>
           
 

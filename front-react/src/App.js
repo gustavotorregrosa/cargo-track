@@ -10,7 +10,7 @@ class App extends Component {
   routes = (
        <Switch>
           <Route path="/start" exact component={InitialScreen}/>
-          <Route path="/" exact component={LoggedScreen}/>
+          <Route path="/" component={LoggedScreen}/>
       </Switch>
  
   )
@@ -27,7 +27,7 @@ class App extends Component {
       return
     }
     this.props.login(user)
-    this.props.history.push('/')
+    // this.props.history.push('/')
   }
 
   render(){

@@ -1,7 +1,5 @@
 const User = require('../model/User')
-const { Sequelize, DataTypes } = require('sequelize')
 const bcrypt = require('bcryptjs');
-const sequelize = require('../util/database')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto');
 
@@ -9,24 +7,50 @@ const crypto = require('crypto');
 exports.renew = (req, res, next) => {
     const email = req.body.email
     const refreshToken = req.body.refreshToken
- 
+
+    getUserByRefreshToken(email, refreshToken).then(user => {
+       let userJWT = {
+           ...user
+       }
+       delete userJWT.refreshToken
+       delete userJWT.refreshTokenValidity
+       userJWT = {
+           ...userJWT,
+           jwt: jwt.sign({...userJWT}, process.env.JWT_KEY)
+       }
+
+       getToken(userJWT).then(user => res.send(user))
+       
+
+    }).catch(e => {
+        res.status(401).send({
+            message: "Error validating token"
+        })
+    })
+
+}
+
+const getUserByRefreshToken = (email, refreshToken) => new Promise((success, reject) => {
 
     User.findOne({
         where: {
             email,
             refreshToken
         }
-    }).then(completeUser => {
-        let completeUserData = {
-            ...completeUser.dataValues
+    }).then(user => {
+        let now = new Date()
+        if(user.refreshTokenValidity < now){
+            reject(false)
         }
-        delete completeUserData.password
-        let userJWT = generateJWT(completeUserData)
-        return res.send(userJWT)
+        let userSafe = {
+            ...user.dataValues
+        }
+        delete userSafe.password
+        success(userSafe)
+
+
     })
-
-}
-
+})
 
 
 
@@ -71,8 +95,6 @@ exports.register = (req, res, next) => {
             message: "Error creating user"
         })
     })
-
-
 }
 
 const generateUserPassword = ({email, name, password}) => new Promise((success, reject) => {
@@ -144,7 +166,7 @@ const getToken = user => new Promise((success, reject) => {
 
 })
 
-generateJWT = user => {
+const generateJWT = user => {
     let userData = {
         ...user
     }

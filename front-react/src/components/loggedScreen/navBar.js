@@ -3,6 +3,7 @@ import 'materialize-css/dist/css/materialize.min.css'
 import M from 'materialize-css'
 import '../../support/icons.css'
 import Logout from './logout'
+import { withRouter} from 'react-router'
 
 
 class NavBar extends Component {
@@ -33,14 +34,21 @@ class NavBar extends Component {
                 <nav className="black">
                     <div className="nav-wrapper">
                         <a href="#" className="brand-logo">Cargo Track</a>
-                        <a href="#" onClick={() => this.instanceSideNav.open()} className="sidenav-trigger"><i className="material-icons">menu</i></a>
-                        <ul id="nav-mobile" className="right hide-on-med-and-down">
+                        <a href="#" onClick={() => this.instanceSideNav.open()} style={{
+                            display: 'block'
+                        }} className="sidenav-trigger"><i className="material-icons">menu</i></a>
+                        {/* <ul id="nav-mobile" className="right hide-on-med-and-down">
                             <li><a onClick={e => this.openLogoutModal(e) } href="#">Logout</a></li>
-                        </ul>
+                        </ul> */}
                     </div>
                 </nav>
                 <ul className="sidenav" ref={sidenav => this.sidenav = sidenav}>
-                    <li><a href="#">Logout</a></li>
+                    <li><a onClick={e => {
+                        e.preventDefault()
+                        this.props.history.push('/categories')
+                        this.instanceSideNav.close()
+
+                        } } href="#">Categories</a></li>
                     <br />
                     <br />
                     <br />
@@ -48,6 +56,7 @@ class NavBar extends Component {
                     <br />
                     <br />
                     <li><div className="divider"></div></li>
+                    <li><a onClick={e => this.openLogoutModal(e) } href="#">Logout</a></li>
                     <li><a onClick={() => this.instanceSideNav.close()} href="#">Fechar</a></li>
                 </ul>
                 <Logout setOpenModal={f => this.childOpenLogoutModal = f} />
@@ -59,4 +68,4 @@ class NavBar extends Component {
 
 }
 
-export default NavBar
+export default withRouter(NavBar)
