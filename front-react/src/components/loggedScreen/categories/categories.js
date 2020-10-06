@@ -116,7 +116,8 @@ class Categories extends Component {
                 <div className="row">
                     <div className="col s4 offset-s8">
                         <PaginationList page={this.state.page} changePage={(p) => this.changePage(p)} numItemsPerPage={this.itemsPerPage} items={this.getCategories()} />
-                    </div>
+                        
+            </div>
                 </div>
                 <br />
                 <br />

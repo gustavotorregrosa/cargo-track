@@ -7,6 +7,7 @@ class PaginationList extends Component {
     getNumPages = () => {
         let num = 0
         if(this.props.items){
+            console.log( this.props.items.length)
             let totalNum = this.props.items.length
             num = Math.ceil(totalNum / this.props.numItemsPerPage)
         }

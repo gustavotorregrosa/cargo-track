@@ -4,8 +4,14 @@ const Product = require('../model/Product')
 
 const migrate = () => {
     User.sync().then(r => console.log('table user created'))
-    Category.sync().then(r => console.log('table category created'))
-    Product.sync().then(r => console.log('table product created'))
+    Category.sync().then(r => 
+        {
+            console.log('table category created')
+            Product.sync().then(r => console.log('table product created'))
+        }
+    )
+        
+    
 
 }
 

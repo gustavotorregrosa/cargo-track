@@ -48,7 +48,13 @@ class NavBar extends Component {
                         this.props.history.push('/categories')
                         this.instanceSideNav.close()
 
-                        } } href="#">Categories</a></li>
+                        }} href="#">Categories</a></li>
+                    <li><a onClick={e => {
+                    e.preventDefault()
+                    this.props.history.push('/products')
+                    this.instanceSideNav.close()
+
+                    }} href="#">Products</a></li>
                     <br />
                     <br />
                     <br />

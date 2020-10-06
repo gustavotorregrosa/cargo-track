@@ -1,8 +1,11 @@
 const Category = require('../model/Category')
+const Product = require('../model/Product')
 
 exports.listCategories = (req, res, next) => {
     Category.findAll({
-        attributes: ['id', 'name']
+        attributes: ['id', 'name'],
+        order: ['name']
+        // include: Product
     }).then(categories => res.send(categories))
 }
 
