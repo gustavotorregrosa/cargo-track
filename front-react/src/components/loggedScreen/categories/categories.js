@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import * as actions from '../../../store/actions/index'
 import SearchBar from '../searchBar/searchBar'
 import PaginationList from '../searchBar/paginationList'
-import { url } from '../../../support/misc'
+import { url, JWTHelper } from '../../../support/misc'
 import TableCategories from './tableCategories'
 import ModalNewCategory from './modalNewCategory'
 import ModalEditCategory from './modalEditCategory'
@@ -32,20 +34,39 @@ class Categories extends Component {
     }
 
     completeCategoriesList = () => {
-        fetch(url("categories")).then(categories => categories.json()).then(categories => {
-            this.setState({
-                categories,
-                page: 1
-            })
-        })
+
+        this.jwtHelper.fetchJWTPromise(url("categories")).then(categories => console.log(categories))
+
+        // fetch(url("categories")).then(categories => categories.json()).then(categories => {
+        //     this.setState({
+        //         categories,
+        //         page: 1
+        //     })
+        // })
 
         
     }
+
+    getUser = () => this.props.user
+
+    _login = user => this.props.login(user)
 
     componentDidMount() {
         setTimeout(() => {
             this.completeCategoriesList()
         }, 100)
+
+        this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))
+
+        // setTimeout(() => {
+        //     this.jwtHelper.callGetUser()
+        // }, 3000)
+
+        // setTimeout(() => {
+        //     this.jwtHelper.updateUser({
+        //         name: 'Felipe'
+        //     })
+        // }, 1000)
     }
 
     getCategories = () => {
@@ -131,4 +152,17 @@ class Categories extends Component {
 
 }
 
-export default Categories
+const mapStateToProps = state => {
+    return {
+      user: state.auth.user
+    }
+  }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        login: (user) => dispatch(actions.login(user)),
+        
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Categories)
