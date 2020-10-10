@@ -65,6 +65,7 @@ class Categories extends Component {
     componentDidMount() {
         setTimeout(() => {
             this.completeCategoriesList()
+            console.log(this.props.user)
         }, 100)
 
         this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))

@@ -8,10 +8,15 @@ exports.renew = (req, res, next) => {
     const email = req.body.email
     const refreshToken = req.body.refreshToken
 
+
+    console.log("ponto 1")
+
     getUserByRefreshToken(email, refreshToken).then(user => {
        let userJWT = {
            ...user
        }
+       console.log("ponto 2")
+       console.log(userJWT)
        delete userJWT.refreshToken
        delete userJWT.refreshTokenValidity
        userJWT = {
@@ -38,10 +43,14 @@ const getUserByRefreshToken = (email, refreshToken) => new Promise((success, rej
             refreshToken
         }
     }).then(user => {
-        let now = new Date()
-        if(user.refreshTokenValidity < now){
-            reject(false)
-        }
+        // let now = new Date()
+        // if(user.refreshTokenValidity < now){
+        //     reject(false)
+        // }
+
+        console.log("teste 123")
+        console.log(user)
+
         let userSafe = {
             ...user.dataValues
         }

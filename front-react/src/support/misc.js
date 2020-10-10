@@ -62,17 +62,45 @@ export class JWTHelper {
         let status = results.status
         if(status == 200){
             success(results.data)
-        }else if (status == 403){
-            alert("renew JWT")
+        }else if (status == 300){
+            let newUser = await this.tryRenewJWT()
+            if(newUser){
+               this.callUpdateUser(newUser)
+               results = await this.fetchOnce(request)
+               status = results.status
+               if(status == 200){
+                    success(results.data)
+                }else {
+                    reject("Redirect to login") 
+                }
+            }else{
+                reject("Redirect to login") 
+            }
         }
 
     
     })
 
+    tryRenewJWT = async () => {
+        let newUser = await fetch(url("auth/renew"), {
+            method: 'post',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email:  this.callGetUser().email,
+                refreshToken:  this.callGetUser().refreshToken
+            }),
+        })
+        return newUser
+
+    }
+
+
     fetchJWTPromise = (url, method = 'get', body = {}) => new Promise((success, reject) => {
         setTimeout(() => {
             let request = this.createRequest(url, method, body)
-            this.fetchJWT(request).then(categories => success(categories))
+            this.fetchJWT(request).then(results => success(results)).catch(e => {alert(e)})
 
         }, 3000)
     })
