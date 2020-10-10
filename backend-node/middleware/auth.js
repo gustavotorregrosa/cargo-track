@@ -10,6 +10,15 @@ exports.checkJWT = (req, res, next) => {
             })
         }
 
+        let expiresIn = decoded.iat + 2*60*60
+        let now = new Date().getTime()
+
+        if(expiresIn < now){
+            return res.status(300).send({
+                message: 'Renew certificate'
+            })
+        }
+
         req.userId = decoded.id
         next()
     })

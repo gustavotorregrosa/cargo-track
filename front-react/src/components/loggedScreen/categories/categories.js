@@ -35,14 +35,25 @@ class Categories extends Component {
 
     completeCategoriesList = () => {
 
-        this.jwtHelper.fetchJWTPromise(url("categories")).then(categories => console.log(categories))
-
-        // fetch(url("categories")).then(categories => categories.json()).then(categories => {
-        //     this.setState({
+        this.jwtHelper.fetchJWTPromise(url("categories")).then(categories => {
+            console.log(categories)
+            this.setState({
+                categories,
+                page: 1
+            })
+        })
+        
+        
+        // then(categories => categories.json()).
+        // then(categories =>  console.log)
+        
+        // // then(categories => {
+        // // this.setState({
         //         categories,
         //         page: 1
         //     })
         // })
+
 
         
     }

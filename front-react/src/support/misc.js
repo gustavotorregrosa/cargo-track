@@ -1,3 +1,5 @@
+import categories from "../components/loggedScreen/categories/categories"
+
 export const url = path => 'http://localhost:3001/' + path
 
 export class JWTHelper {
@@ -14,43 +16,28 @@ export class JWTHelper {
         ...user
     })
 
-    generateHeaders = () => {
-        alert("gerou headers")
-        alert(this.callGetUser().jwt )
-        this.headers = new Headers({
-            'Accept': '*/*'
-            
-        })
-        this.headers.append('jwt', this.callGetUser().jwt)
-    }
+
 
     createRequest = (url, method, body) => {
-        this.request = new Request('http://localhost:3001/categories123', {
+        return new Request(url, {
             method,
-            headers: this.headers,
-            // body: JSON.stringify({
-            //     ...body
-            // })
+            headers: {
+                'jwt': this.callGetUser().jwt
+
+            }
         })
 
-        alert("criou request")
-        console.log(this.request)
     }
 
-    unitaryFetchPromise = new Promise((success, reject) => {
+    unitaryFetchPromise = async () => new Promise((success, reject) => {
         let status
         let result
-        console.log("prepara fetch 2")
         fetch(this.request).then(r => {
-            console.log("lanca fetch")
+            alert("foi a request...")
             status = r.status
-            alert(status)
-            console.log(this.request)
-            console.log(r)
             return r.json()
         }).then(r => {
-            console.log("tentando exibir JSON")
-            console.log(r)
+
             result = r
             success({
                 status,
@@ -59,25 +46,42 @@ export class JWTHelper {
         })
     })
 
-    fetchOnce = async () => {
-        console.log("prepara fetch")
-        let data = await this.unitaryFetchPromise
-        this.status = data.status
-        this.result = data.result
+    fetchOnce = async request => {
+        let results = await fetch(request)
+        let status = results.status
+        results = await results.json()
+        return {
+            status,
+            data: results
+        }
     }
 
-    fetchJWT = async (url, method, body) => {
-        alert("ponto 2")
-        this.generateHeaders()
-        this.createRequest(url, method, body)
-        await this.fetchOnce()
-    }
+    fetchJWT = request => new Promise(async (success, reject) => {
+       
+        let results = await this.fetchOnce(request)
+        let status = results.status
+        if(status == 200){
+            success(results.data)
+        }else if (status == 403){
+            alert("renew JWT")
+        }
 
-    fetchJWTPromise = (url, method = 'get', body = {}) => new Promise(async (success, reject) => {
-        alert("ponto 1")
-        await this.fetchJWT(url, method, body)
-        alert(this.result)
-        success(this.result)
+    
     })
+
+    fetchJWTPromise = (url, method = 'get', body = {}) => new Promise((success, reject) => {
+        setTimeout(() => {
+            let request = this.createRequest(url, method, body)
+            this.fetchJWT(request).then(categories => success(categories))
+
+        }, 3000)
+    })
+
+    // fetchJWTPromise = (url, method = 'get', body = {}) => new Promise(async (success, reject) => {
+
+    //     await this.fetchJWT(url, method, body)
+    //     success(this.result)
+    // })
+    
 
 }

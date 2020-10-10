@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const bodyParser = require('body-parser')
 const migrate = require('./util/migrations')
 const app = express()
@@ -11,6 +12,7 @@ const { response } = require('express')
 require('dotenv').config()
 
 app.use(bodyParser.json())
+app.use(cors())
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
