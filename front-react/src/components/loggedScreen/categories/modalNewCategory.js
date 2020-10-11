@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import 'materialize-css/dist/css/materialize.min.css'
 import M from 'materialize-css'
-import { url } from '../../../support/misc'
+import { url, JWTHelper } from '../../../support/misc'
+import { connect } from 'react-redux'
+import * as actions from '../../../store/actions/index'
 
 class ModalNewCategory extends Component {
 
@@ -18,6 +20,10 @@ class ModalNewCategory extends Component {
         category: ""
     }
 
+    getUser = () => this.props.user
+
+    _login = user => this.props.login(user)
+
     componentDidMount() {
         this.instance = M.Modal.init(this.elem, {
             onCloseEnd: () => this.setState({
@@ -26,6 +32,8 @@ class ModalNewCategory extends Component {
             })
         })
         this.props.setOpenModal(this.openModal)
+
+        this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))
     }
 
     openModal = () => {
@@ -59,7 +67,10 @@ class ModalNewCategory extends Component {
             headers: myHeaders
         }
         setTimeout(() => {
-            fetch(options.url, options).then(r => r.json()).then(r => {
+
+            this.jwtHelper.fetchJWTPromise(url("categories/"), 'post', {
+                name: this.state.category
+            }).then(r => {
                 M.toast({ html: r.message })
                 this.closeModal()
                 this.props.listCategories()
@@ -88,9 +99,20 @@ class ModalNewCategory extends Component {
             </div>
         )
     }
-
-
-
 }
 
-export default ModalNewCategory
+
+const mapStateToProps = state => {
+    return {
+      user: state.auth.user
+    }
+  }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        login: (user) => dispatch(actions.login(user)),
+        
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ModalNewCategory)

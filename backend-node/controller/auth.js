@@ -8,8 +8,6 @@ exports.renew = (req, res, next) => {
     const email = req.body.email
     const refreshToken = req.body.refreshToken
 
-    console.log(refreshToken)
-
     getUserByRefreshToken(email, refreshToken).then(user => {
        let userJWT = {
            ...user
@@ -48,14 +46,11 @@ const getUserByRefreshToken = (email, refreshToken) => new Promise((success, rej
             reject(false)
         }
      
-
         let userSafe = {
             ...user.dataValues
         }
         delete userSafe.password
         success(userSafe)
-
-
     })
 })
 

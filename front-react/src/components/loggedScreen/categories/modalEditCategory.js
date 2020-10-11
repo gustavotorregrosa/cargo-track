@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import 'materialize-css/dist/css/materialize.min.css'
 import M from 'materialize-css'
-import { url } from '../../../support/misc'
+import { url, JWTHelper } from '../../../support/misc'
+import { connect } from 'react-redux'
+import * as actions from '../../../store/actions/index'
 
 class ModalEditCategory extends Component {
 
@@ -18,6 +20,10 @@ class ModalEditCategory extends Component {
         id: "",
         name: ""
     }
+
+    getUser = () => this.props.user
+
+    _login = user => this.props.login(user)
 
     openModal = category => {
         this.instance.open()
@@ -45,6 +51,9 @@ class ModalEditCategory extends Component {
             }
         })
         this.props.setOpenModal(this.openModal)
+
+        this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))
+
     }
 
 
@@ -64,25 +73,19 @@ class ModalEditCategory extends Component {
         this.setState({
             loading: true
         })
-        let myHeaders = new Headers
-        myHeaders.set("Content-Type", "application/json")
-        let options = {
-            url: url("categories/" + this.state.id),
-            method: 'put',
-            body: JSON.stringify({
-                name: this.state.name
-            }),
-            headers: myHeaders
-        }
+       
         setTimeout(() => {
-            fetch(options.url, options).then(r => r.json()).then(r => {
-                  M.toast({ html: r.message })
-                  this.closeModal()
-                  this.props.listCategories()
+            this.jwtHelper.fetchJWTPromise(url("categories/" + this.state.id), 'put', {
+                name: this.state.name
+            }).then(r => {
+                M.toast({ html: r.message })
+                this.closeModal()
+                this.props.listCategories()
             }).catch(r => {
                 M.toast({ html: r.message })
                 this.closeModal()
             })
+            
         }, 1000);
     }
 
@@ -108,4 +111,17 @@ class ModalEditCategory extends Component {
 
 }
 
-export default ModalEditCategory
+const mapStateToProps = state => {
+    return {
+      user: state.auth.user
+    }
+  }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        login: (user) => dispatch(actions.login(user)),
+        
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ModalEditCategory)

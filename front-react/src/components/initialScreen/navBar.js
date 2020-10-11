@@ -8,17 +8,28 @@ import Register from './register'
 class NavBar extends Component {
 
 
+
+    constructor(props){
+        super(props)
+        this.sidenav = null
+    }
+
     componentDidMount(){
         this.activateSideNav()
     }
 
 
     activateSideNav = () => {
-        if(this.instanceSideNav){
-            this.instanceSideNav.destroy()
-        }
-        M.Sidenav.init(this.sidenav, {});
-        this.instanceSideNav = M.Sidenav.getInstance(this.sidenav)
+        try{
+            if(this.instanceSideNav){
+                this.instanceSideNav.destroy()
+            }
+            M.Sidenav.init(this.sidenav, {});
+            this.instanceSideNav = M.Sidenav.getInstance(this.sidenav)
+        }catch(e){
+            console.log(e)
+        } 
+        
     }
 
     openLoginModal = e => {

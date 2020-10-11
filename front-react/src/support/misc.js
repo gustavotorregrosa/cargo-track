@@ -21,13 +21,28 @@ export class JWTHelper {
 
 
     createRequest = (url, method, body) => {
+        if(body){
+            return new Request(url, {
+                method,
+                headers: {
+                    'jwt': this.callGetUser().jwt,
+                    "Content-Type": "application/json"
+
+    
+                },
+                body: JSON.stringify(body)
+            })
+        }
+
         return new Request(url, {
             method,
             headers: {
-                'jwt': this.callGetUser().jwt
+                'jwt': this.callGetUser().jwt,
+                 "Content-Type": "application/json"
 
             }
         })
+       
 
     }
 
@@ -79,14 +94,19 @@ export class JWTHelper {
                     status = results.status
                     if(status == 200){
                          success(results.data)
-                     }else {
-                         reject("Redirect to login") 
+                     }else {       
+                        const e = new CustomEvent('openLogin')
+                        document.dispatchEvent(e)
+                        reject("Redirect to login")
+
                      }
-                }, 3000)
+                }, 100)
               
-            }else{
-                reject("Redirect to login") 
             }
+        }else {
+            const e = new CustomEvent('openLogin')
+            document.dispatchEvent(e)
+            reject("Redirect to login")
         }
 
     
@@ -111,19 +131,12 @@ export class JWTHelper {
     }
 
 
-    fetchJWTPromise = (url, method = 'get', body = {}) => new Promise((success, reject) => {
-        setTimeout(() => {
+    fetchJWTPromise = (url, method = 'get', body = null) => new Promise((success, reject) => {
             let request = this.createRequest(url, method, body)
-            this.fetchJWT(request).then(results => success(results)).catch(e => {console.log(e)})
+            this.fetchJWT(request).then(results => success(results)).catch((e) => {
+                console.log(e)
+            })
 
-        }, 3000)
     })
-
-    // fetchJWTPromise = (url, method = 'get', body = {}) => new Promise(async (success, reject) => {
-
-    //     await this.fetchJWT(url, method, body)
-    //     success(this.result)
-    // })
-    
 
 }

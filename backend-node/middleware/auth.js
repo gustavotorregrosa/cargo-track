@@ -10,8 +10,14 @@ exports.checkJWT = (req, res, next) => {
             })
         }
 
-        let expiresIn = decoded.iat + 60 // 2*60*60
+        let expiresIn = decoded.iat + 60*60 // 1 hour
         let now = (new Date().getTime())/1000
+
+        if((expiresIn + 2*60*60) < now){ //2 hours
+            return res.status(403).send({
+                message: 'Not authorized'
+            })
+        }
 
         if(expiresIn < now){
             return res.status(300).send({

@@ -1,8 +1,10 @@
 const sequelize = require('../util/database')
-const { Sequelize, DataTypes } = require('sequelize')
+const { Sequelize, DataTypes, Model } = require('sequelize')
 const Category = require('./Category')
 
-const Product = sequelize.define('Product', {
+class Product extends Model {}
+
+Product.init({
     id: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -20,10 +22,35 @@ const Product = sequelize.define('Product', {
           key: 'id'
         }
       }
-    
 }, {
+    sequelize,
+    modelName: 'Product',
     freezeTableName: true
-});
+
+})
+
+// const Product = sequelize.define('Product', {
+//     id: {
+//         type: DataTypes.UUID,
+//         defaultValue: Sequelize.UUIDV4,
+//         primaryKey: true
+//     },
+//     name: {
+//         type: DataTypes.STRING,
+//         allowNull: false
+//     },
+//     categoryId: {
+//         type: DataTypes.UUID,
+//         allowNull: false,
+//         references: {
+//           model: 'Category',
+//           key: 'id'
+//         }
+//       }
+    
+// }, {
+//     freezeTableName: true
+// });
 
 Category.hasMany(Product, {
     foreignKey: 'categoryId'

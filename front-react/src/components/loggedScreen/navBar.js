@@ -1,25 +1,44 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import 'materialize-css/dist/css/materialize.min.css'
 import M from 'materialize-css'
 import '../../support/icons.css'
 import Logout from './logout'
 import { withRouter} from 'react-router'
+import * as actions from '../../store/actions/index'
 
 
 class NavBar extends Component {
 
 
+    constructor(props){
+        super(props)
+        this.sidenav = null
+    }
+
     componentDidMount(){
         this.activateSideNav()
+        document.addEventListener('openLogin',() => this.logUserOut())
     }
 
 
+
+    logUserOut = () => {
+        this.props.logout()
+        M.toast({ html: 'Please login again' })
+    }
+
     activateSideNav = () => {
-        if(this.instanceSideNav){
-            this.instanceSideNav.destroy()
+        try{
+            if(this.instanceSideNav){
+                this.instanceSideNav.destroy()
+            }
+            M.Sidenav.init(this.sidenav, {});
+            this.instanceSideNav = M.Sidenav.getInstance(this.sidenav)
+        }catch(e){
+            console.log(e)
         }
-        M.Sidenav.init(this.sidenav, {});
-        this.instanceSideNav = M.Sidenav.getInstance(this.sidenav)
+        
     }
 
     openLogoutModal = e => {
@@ -74,4 +93,18 @@ class NavBar extends Component {
 
 }
 
-export default withRouter(NavBar)
+const mapStateToProps = state => {
+    return {
+      user: state.auth.user
+    }
+  }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        logout: () => dispatch(actions.logout()),
+        
+    }
+}
+
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NavBar))

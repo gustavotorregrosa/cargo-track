@@ -1,7 +1,9 @@
 const sequelize = require('../util/database')
-const { Sequelize, DataTypes } = require('sequelize')
+const { Sequelize, DataTypes, Model } = require('sequelize')
 
-const Category = sequelize.define('Category', {
+class Category extends Model {}
+
+Category.init({
     id: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -12,8 +14,26 @@ const Category = sequelize.define('Category', {
         allowNull: false,
         unique: true
     }
+
 }, {
-    freezeTableName: true
+    sequelize,
+    freezeTableName: true,
+    modelName: 'Category'
 })
+
+// const Category = sequelize.define('Category', {
+//     id: {
+//         type: DataTypes.UUID,
+//         defaultValue: Sequelize.UUIDV4,
+//         primaryKey: true
+//     },
+//     name: {
+//         type: DataTypes.STRING,
+//         allowNull: false,
+//         unique: true
+//     }
+// }, {
+//     freezeTableName: true
+// })
 
 module.exports = Category

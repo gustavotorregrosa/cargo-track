@@ -36,32 +36,11 @@ class Categories extends Component {
     completeCategoriesList = () => {
 
         this.jwtHelper.fetchJWTPromise(url("categories")).then(categories => {
-            console.log(categories)
             this.setState({
                 categories,
                 page: 1
             })
         })
-        
-
-        // fetch(url("categories")).then(categories => categories.json()).then(categories => {
-        //     this.setState({
-        //         categories,
-        //         page: 1
-        //     })
-        // })
-        
-        // then(categories => categories.json()).
-        // then(categories =>  console.log)
-        
-        // // then(categories => {
-        // // this.setState({
-        //         categories,
-        //         page: 1
-        //     })
-        // })
-
-
         
     }
 
@@ -72,20 +51,10 @@ class Categories extends Component {
     componentDidMount() {
         setTimeout(() => {
             this.completeCategoriesList()
-            console.log(this.props.user)
         }, 100)
 
         this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))
 
-        // setTimeout(() => {
-        //     this.jwtHelper.callGetUser()
-        // }, 3000)
-
-        // setTimeout(() => {
-        //     this.jwtHelper.updateUser({
-        //         name: 'Felipe'
-        //     })
-        // }, 1000)
     }
 
     getCategories = () => {

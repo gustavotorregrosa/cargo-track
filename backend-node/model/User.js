@@ -1,7 +1,9 @@
 const sequelize = require('../util/database')
-const { Sequelize, DataTypes } = require('sequelize')
+const { Sequelize, DataTypes, Model } = require('sequelize')
 
-const User = sequelize.define('User', {
+class User extends Model {}
+
+User.init({
     id: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -27,8 +29,12 @@ const User = sequelize.define('User', {
     refreshTokenValidity: {
         type: DataTypes.DATE,
         
-    },
+    }
+
 }, {
+    sequelize,
+    modelName: 'User',
+    freezeTableName: true,
     instanceMethods: {
         toJSON: function () {
           var values = Object.assign({}, this.get());  
@@ -36,10 +42,48 @@ const User = sequelize.define('User', {
           return values;
         }
       },
-     
-    freezeTableName: true
-    
+
 })
+
+// const User = sequelize.define('User', {
+//     id: {
+//         type: DataTypes.UUID,
+//         defaultValue: Sequelize.UUIDV4,
+//         primaryKey: true
+//     },
+//     name: {
+//         type: DataTypes.STRING,
+//         allowNull: false
+//     },
+//     email: {
+//         type: DataTypes.STRING,
+//         allowNull: false,
+//         unique: true
+//     },
+//     password: {
+//         type: DataTypes.STRING,
+//         allowNull: false
+//     },
+//     refreshToken: {
+//         type: DataTypes.STRING,
+        
+//     },
+//     refreshTokenValidity: {
+//         type: DataTypes.DATE,
+        
+//     },
+// }, {
+//     instanceMethods: {
+//         toJSON: function () {
+//           var values = Object.assign({}, this.get());  
+//           delete values.password;
+//           return values;
+//         }
+//       },
+     
+//     freezeTableName: true
+    
+// })
 
 
 module.exports = User
