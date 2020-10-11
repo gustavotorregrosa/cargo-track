@@ -11,10 +11,12 @@ export class JWTHelper {
 
     callGetUser = () => this.getUser()
 
-    callUpdateUser = user => this.updateUser({
-        ...this.getUser(),
-        ...user
-    })
+    callUpdateUser = user => {
+        this.updateUser({
+            ...this.getUser(),
+            ...user
+        })
+    }
 
 
 
@@ -33,7 +35,7 @@ export class JWTHelper {
         let status
         let result
         fetch(this.request).then(r => {
-            alert("foi a request...")
+
             status = r.status
             return r.json()
         }).then(r => {
@@ -66,13 +68,22 @@ export class JWTHelper {
             let newUser = await this.tryRenewJWT()
             if(newUser){
                this.callUpdateUser(newUser)
-               results = await this.fetchOnce(request)
-               status = results.status
-               if(status == 200){
-                    success(results.data)
-                }else {
-                    reject("Redirect to login") 
-                }
+                setTimeout(async () => {
+                    let newRequest = new Request(request.url, {
+                        method: request.method,
+                        headers: {
+                            jwt: this.callGetUser().jwt
+                        }
+                    })
+                    results = await this.fetchOnce(newRequest)
+                    status = results.status
+                    if(status == 200){
+                         success(results.data)
+                     }else {
+                         reject("Redirect to login") 
+                     }
+                }, 3000)
+              
             }else{
                 reject("Redirect to login") 
             }
@@ -80,6 +91,8 @@ export class JWTHelper {
 
     
     })
+
+
 
     tryRenewJWT = async () => {
         let newUser = await fetch(url("auth/renew"), {
@@ -92,7 +105,8 @@ export class JWTHelper {
                 refreshToken:  this.callGetUser().refreshToken
             }),
         })
-        return newUser
+        
+        return newUser.json()
 
     }
 
@@ -100,7 +114,7 @@ export class JWTHelper {
     fetchJWTPromise = (url, method = 'get', body = {}) => new Promise((success, reject) => {
         setTimeout(() => {
             let request = this.createRequest(url, method, body)
-            this.fetchJWT(request).then(results => success(results)).catch(e => {alert(e)})
+            this.fetchJWT(request).then(results => success(results)).catch(e => {console.log(e)})
 
         }, 3000)
     })

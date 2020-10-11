@@ -10,8 +10,8 @@ exports.checkJWT = (req, res, next) => {
             })
         }
 
-        let expiresIn = decoded.iat + 2*60*60
-        let now = new Date().getTime()
+        let expiresIn = decoded.iat + 60 // 2*60*60
+        let now = (new Date().getTime())/1000
 
         if(expiresIn < now){
             return res.status(300).send({

@@ -43,6 +43,13 @@ class Categories extends Component {
             })
         })
         
+
+        // fetch(url("categories")).then(categories => categories.json()).then(categories => {
+        //     this.setState({
+        //         categories,
+        //         page: 1
+        //     })
+        // })
         
         // then(categories => categories.json()).
         // then(categories =>  console.log)
