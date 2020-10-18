@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { withRouter} from 'react-router'
 
 class ProductsTable extends Component {
 
@@ -20,7 +21,11 @@ class ProductsTable extends Component {
     activateDeletion = (e, el) => {
         e.preventDefault()
         this.props.delete(el)
+    }
 
+    goToMovements = (e, el) => {
+        e.preventDefault()
+        this.props.history.push('/movements/' + el.id)
 
     }
 
@@ -28,7 +33,9 @@ class ProductsTable extends Component {
         <div>
             <a href="#" onClick={(e) => this.activateEdition(e, el)}><i class="material-icons">edit</i></a>
             &nbsp;&nbsp;&nbsp;
-                <a href="#" onClick={(e) => this.activateDeletion(e, el)} ><i class="material-icons">delete</i></a>
+            <a href="#" onClick={(e) => this.activateDeletion(e, el)} ><i class="material-icons">delete</i></a>
+            &nbsp;&nbsp;&nbsp;
+            <a href="#" onClick={(e) => this.goToMovements(e, el)} ><i class="material-icons">money</i></a>
         </div>
     )
 
@@ -55,4 +62,4 @@ class ProductsTable extends Component {
 }
 
 
-export default ProductsTable
+export default withRouter(ProductsTable)

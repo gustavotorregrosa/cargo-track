@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import M from 'materialize-css'
 import SelectCategories from './selectCategories'
-import { url } from '../../../support/misc'
+import { url, JWTHelper } from '../../../support/misc'
+import { connect } from 'react-redux'
+import * as actions from '../../../store/actions/index'
 
 class CreateEditProduct extends Component {
 
@@ -20,6 +22,10 @@ class CreateEditProduct extends Component {
             categoryId: null
     }
 
+
+    getUser = () => this.props.user
+
+    _login = user => this.props.login(user)
 
 
     imposeCategorySelection = (c = null) => {
@@ -51,6 +57,8 @@ class CreateEditProduct extends Component {
             }
         })
         this.props.setOpenModal(this.openModal)
+
+        this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))
 
     }
 
@@ -86,18 +94,9 @@ class CreateEditProduct extends Component {
         this.setState({
             loading: true
         })
-        let myHeaders = new Headers
-        myHeaders.set("Content-Type", "application/json")
-        let options = {
-            url: url('products'),
-            method: 'post',
-            body: JSON.stringify({
-                ...this.state
-            }),
-            headers: myHeaders
-        }
+       
         setTimeout(() => {
-            fetch(options.url, options).then(r => r.json()) .then(r => {
+            this.jwtHelper.fetchJWTPromise(url('products'), 'post', { ...this.state }).then(r => {
                 M.toast({ html: r.message })
                 this.props.listProducts()
                 this.closeModal()
@@ -147,4 +146,17 @@ class CreateEditProduct extends Component {
 
 }
 
-export default CreateEditProduct
+const mapStateToProps = state => {
+    return {
+      user: state.auth.user
+    }
+  }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        login: (user) => dispatch(actions.login(user)),
+        
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateEditProduct)

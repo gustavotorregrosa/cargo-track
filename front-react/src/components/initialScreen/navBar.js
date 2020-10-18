@@ -20,15 +20,21 @@ class NavBar extends Component {
 
 
     activateSideNav = () => {
-        try{
-            if(this.instanceSideNav){
-                this.instanceSideNav.destroy()
-            }
-            M.Sidenav.init(this.sidenav, {});
-            this.instanceSideNav = M.Sidenav.getInstance(this.sidenav)
-        }catch(e){
-            console.log(e)
-        } 
+
+        this.sidenav = document.getElementById("loggin-sidenav")
+        M.Sidenav.init(this.sidenav, {});
+        this.instanceSideNav = M.Sidenav.getInstance(this.sidenav)
+
+        // try{
+        //     this.sidenav = document.getElementById("loggin-sidenav")
+        //     if(this.instanceSideNav){
+        //         this.instanceSideNav.destroy()
+        //     }
+        //     M.Sidenav.init(this.sidenav, {});
+        //     this.instanceSideNav = M.Sidenav.getInstance(this.sidenav)
+        // }catch(e){
+        //     console.log(e)
+        // } 
         
     }
 
@@ -56,7 +62,7 @@ class NavBar extends Component {
                         </ul>
                     </div>
                 </nav>
-                <ul className="sidenav" ref={sidenav => this.sidenav = sidenav}>
+                <ul className="sidenav" id="loggin-sidenav">
                     <li><a onClick={e => this.openRegisterModal(e)} href="#">Registrar</a></li>
                     <li><a onClick={e => this.openLoginModal(e)} href="#">Login</a></li>
                     <br />

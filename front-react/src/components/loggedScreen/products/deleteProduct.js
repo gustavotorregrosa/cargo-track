@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import 'materialize-css/dist/css/materialize.min.css'
 import M from 'materialize-css'
-import { url } from '../../../support/misc'
+import { url, JWTHelper } from '../../../support/misc'
+import { connect } from 'react-redux'
 
 class DeleteProduct extends Component {
 
@@ -17,6 +18,10 @@ class DeleteProduct extends Component {
         id: "",
         name: ""
     }
+
+    getUser = () => this.props.user
+
+    _login = user => this.props.login(user)
 
     componentDidMount() {
         this.elem = document.getElementById('modal-delete-product')
@@ -48,15 +53,9 @@ class DeleteProduct extends Component {
         this.setState({
             loading: true
         })
-        let myHeaders = new Headers
-        myHeaders.set("Content-Type", "application/json")
-        let options = {
-            url: url('products/' + this.state.id),
-            method: 'delete',
-            headers: myHeaders
-        }
         setTimeout(() => {
-            fetch(options.url, options).then(r => r.json()).then(r => {
+            this.jwtHelper.fetchJWTPromise(url('products/' + this.state.id), 'delete')
+            .then(r => {
                 M.toast({ html: r.message })
                 this.closeModal()
                 this.props.listProducts()

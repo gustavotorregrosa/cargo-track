@@ -29,15 +29,9 @@ class NavBar extends Component {
     }
 
     activateSideNav = () => {
-        try{
-            if(this.instanceSideNav){
-                this.instanceSideNav.destroy()
-            }
-            M.Sidenav.init(this.sidenav, {});
-            this.instanceSideNav = M.Sidenav.getInstance(this.sidenav)
-        }catch(e){
-            console.log(e)
-        }
+        this.sidenav = document.getElementById("logged-sidenav")
+        M.Sidenav.init(this.sidenav, {});
+        this.instanceSideNav = M.Sidenav.getInstance(this.sidenav)
         
     }
 
@@ -56,12 +50,9 @@ class NavBar extends Component {
                         <a href="#" onClick={() => this.instanceSideNav.open()} style={{
                             display: 'block'
                         }} className="sidenav-trigger"><i className="material-icons">menu</i></a>
-                        {/* <ul id="nav-mobile" className="right hide-on-med-and-down">
-                            <li><a onClick={e => this.openLogoutModal(e) } href="#">Logout</a></li>
-                        </ul> */}
                     </div>
                 </nav>
-                <ul className="sidenav" ref={sidenav => this.sidenav = sidenav}>
+                <ul className="sidenav" id="logged-sidenav" >
                     <li><a onClick={e => {
                         e.preventDefault()
                         this.props.history.push('/categories')

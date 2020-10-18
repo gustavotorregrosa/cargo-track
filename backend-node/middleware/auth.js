@@ -2,10 +2,12 @@ const jwt = require('jsonwebtoken')
 
 exports.checkJWT = (req, res, next) => {
     const token = req.headers.jwt
+    console.log(token)
 
     jwt.verify(token, process.env.JWT_KEY, (error, decoded) => {
         if(error){
-            return res.status(403).send({
+            console.log(error)
+            return res.status(401).send({
                 message: 'Not authorized'
             })
         }

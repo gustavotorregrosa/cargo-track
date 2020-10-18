@@ -5,7 +5,9 @@ import PaginationList from '../searchBar/paginationList'
 import ProductsTable from './tableProducts'
 import CreateEditProduct from './createEditProduct'
 import DeleteProduct from './deleteProduct'
-import { url } from '../../../support/misc'
+import { url, JWTHelper } from '../../../support/misc'
+import * as actions from '../../../store/actions/index'
+import { connect } from 'react-redux'
 
 class Products extends Component {
 
@@ -20,9 +22,17 @@ class Products extends Component {
     numItemsPerPage = 5
 
     componentDidMount() {
+
+        this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))
+ 
         this.completeListCategories()
         this.completeListProducts()
+ 
     }
+
+    getUser = () => this.props.user
+
+    _login = user => this.props.login(user)
 
 
     changePage = (page = null) => {
@@ -75,7 +85,7 @@ class Products extends Component {
     }
 
     completeListProducts = () => {
-        fetch(url("products")).then(products => products.json()).then(products => {
+        this.jwtHelper.fetchJWTPromise(url("products")).then(products => {
             this.setState({
                 products
             })
@@ -85,11 +95,12 @@ class Products extends Component {
                 })
             }
         })
+
     }
 
 
     completeListCategories = () => {
-        fetch(url("categories")).then(r => r.json()).then(categories => {
+        this.jwtHelper.fetchJWTPromise(url("categories")).then(categories => {
             this.setState({
                 categories
             })
@@ -170,4 +181,17 @@ class Products extends Component {
 
 }
 
-export default Products
+const mapStateToProps = state => {
+    return {
+      user: state.auth.user
+    }
+  }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        login: (user) => dispatch(actions.login(user)),
+        
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Products)

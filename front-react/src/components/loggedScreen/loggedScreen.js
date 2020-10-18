@@ -4,6 +4,7 @@ import NavBar from './navBar'
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom'
 import Categories from './categories/categories'
 import Products from './products/products'
+import Movements from './movements/movements'
 
 class LoggedScreen extends Component {
 
@@ -18,6 +19,7 @@ class LoggedScreen extends Component {
                     <Switch>
                         <Route path="/categories" component={Categories} />
                         <Route path="/products" component={Products} />
+                        <Route path="/movements/:productID" component={Movements} />
                         <Redirect from="/*" to="/" />
                     </Switch>
                 </div>
