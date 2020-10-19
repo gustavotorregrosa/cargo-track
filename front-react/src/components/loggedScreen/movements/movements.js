@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import MovementCreateModal from './createMovements'
 
 class Movements extends Component {
 
@@ -17,6 +18,7 @@ class Movements extends Component {
 
     openModalCreate = e => {
         e.preventDefault()
+        this.childOpenModalCreateMovement()
     }
 
 
@@ -59,6 +61,7 @@ class Movements extends Component {
                     </table>
                 </div>
 
+                <MovementCreateModal setOpenModal={f => this.childOpenModalCreateMovement = f} />
             </div>
         )
     }

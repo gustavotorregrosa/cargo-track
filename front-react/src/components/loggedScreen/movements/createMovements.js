@@ -13,6 +13,10 @@ class MovementCreateModal extends Component {
         super(props)
         this.elem = null
         this.instance = null
+        this.selectInstance = null
+        this.selectElem = null
+        this.datePickerElem = null
+        this.datePickerInstance = null
         this.openModal = this.openModal.bind(this)
 
     }
@@ -25,6 +29,19 @@ class MovementCreateModal extends Component {
                 category: ""
             })
         })
+
+        this.selectInstance = M.FormSelect.init(this.selectElem, {})
+
+        this.datePickerInstance = M.Datepicker.init(this.datePickerElem, {
+            onOpen: () => {
+                this.elem.style.height = '60%'
+            },
+
+            onClose: () => {
+                this.elem.style.height = '15em'
+            }
+        })
+
         this.props.setOpenModal(this.openModal)
 
         // this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))
@@ -38,17 +55,26 @@ class MovementCreateModal extends Component {
         this.instance.close()
     }
 
-
-
-
     render() {
         return (
-            <div ref={modal => this.elem = modal} className="modal">
+            <div ref={modal => this.elem = modal} className="modal" style={{width: '80%', height: '15em'}}>
                 <div className="modal-content">
-                    <div className="input-field col s6">
-                        <input id="new-category-input" type="text" className="validate" />
-                        <label htmlFor="new-category-input">New category</label>
+                    <div className="row">
+                        <div className="input-field col s4">
+                            <select ref={select => this.selectElem = select}>
+                                <option value="" disabled selected>Sell/ Buy</option>
+                                <option value="sell">Sell</option>
+                                <option value="buy">Buy</option>
+                            </select>
+                            <label>Movement type</label>
+                        </div>
+
+                        <div className="input-field col s4">
+                            <input ref={input => this.datePickerElem = input} type="text" className="datepicker"/>
+                            <label>Date</label>
+                        </div>
                     </div>
+                    
                 </div>
                 <div className="modal-footer">
                     <a href="#" className="waves-effect waves-green btn-flat">Save</a>
