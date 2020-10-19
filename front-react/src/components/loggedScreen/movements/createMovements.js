@@ -6,7 +6,12 @@ class MovementCreateModal extends Component {
 
 
     state = {
-        loading: false
+        loading: false,
+        type: '',
+        date: '',
+        amount: 0,
+
+
     }
 
     constructor(props) {
@@ -21,12 +26,14 @@ class MovementCreateModal extends Component {
 
     }
 
-
     componentDidMount() {
         this.instance = M.Modal.init(this.elem, {
             onCloseEnd: () => this.setState({
                 loading: false,
-                category: ""
+                type: '',
+                date: '',
+                amount: 0,
+
             })
         })
 
@@ -39,7 +46,13 @@ class MovementCreateModal extends Component {
 
             onClose: () => {
                 this.elem.style.height = '15em'
+            },
+
+            onSelect: d => {
+                this.datePickerChange(d)
             }
+
+
         })
 
         this.props.setOpenModal(this.openModal)
@@ -55,13 +68,28 @@ class MovementCreateModal extends Component {
         this.instance.close()
     }
 
+    changeSelect = e => {
+        e.preventDefault()
+        this.selectInstance.destroy()
+        this.selectInstance = M.FormSelect.init(this.selectElem, {})
+        const type = this.selectInstance.getSelectedValues()[0]
+        this.setState({
+            type
+        })
+    }
+
+    datePickerChange = date => {
+        alert("foi")
+        console.log(date)
+    }
+
     render() {
         return (
             <div ref={modal => this.elem = modal} className="modal" style={{width: '80%', height: '15em'}}>
                 <div className="modal-content">
                     <div className="row">
                         <div className="input-field col s4">
-                            <select ref={select => this.selectElem = select}>
+                            <select onChange={e => this.changeSelect(e)} ref={select => this.selectElem = select}>
                                 <option value="" disabled selected>Sell/ Buy</option>
                                 <option value="sell">Sell</option>
                                 <option value="buy">Buy</option>
@@ -70,14 +98,19 @@ class MovementCreateModal extends Component {
                         </div>
 
                         <div className="input-field col s4">
-                            <input ref={input => this.datePickerElem = input} type="text" className="datepicker"/>
+                            <input onChange={ e => this.datePickerChange(e)} ref={input => this.datePickerElem = input} type="text" className="datepicker"/>
                             <label>Date</label>
+                        </div>
+
+                        <div className="input-field col s4">
+                            <input type="number"/>
+                            <label>Amount</label>
                         </div>
                     </div>
                     
                 </div>
                 <div className="modal-footer">
-                    <a href="#" className="waves-effect waves-green btn-flat">Save</a>
+                    <a href="#" disabled={this.state.type == ""} className="waves-effect waves-green btn-flat">Save</a>
                 </div>
                 {this.state.loading ? (<div className="progress"><div className="indeterminate"></div></div>) : null}
 
