@@ -56,16 +56,7 @@ class ModalNewCategory extends Component {
         this.setState({
             loading: true
         })
-        let myHeaders = new Headers
-        myHeaders.set("Content-Type", "application/json")
-        let options = {
-            url: url("categories"),
-            method: 'post',
-            body: JSON.stringify({
-                name: this.state.category
-            }),
-            headers: myHeaders
-        }
+
         setTimeout(() => {
 
             this.jwtHelper.fetchJWTPromise(url("categories/"), 'post', {

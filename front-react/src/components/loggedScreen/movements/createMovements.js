@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import 'materialize-css/dist/css/materialize.min.css'
+import * as actions from '../../../store/actions/index'
+import { url, JWTHelper } from '../../../support/misc'
 import M from 'materialize-css'
 
 class MovementCreateModal extends Component {
@@ -10,8 +13,6 @@ class MovementCreateModal extends Component {
         type: '',
         date: '',
         amount: 0,
-
-
     }
 
     constructor(props) {
@@ -22,6 +23,7 @@ class MovementCreateModal extends Component {
         this.selectElem = null
         this.datePickerElem = null
         this.datePickerInstance = null
+        this.amountInput = null
         this.openModal = this.openModal.bind(this)
 
     }
@@ -57,7 +59,7 @@ class MovementCreateModal extends Component {
 
         this.props.setOpenModal(this.openModal)
 
-        // this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))
+        this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))
     }
 
     openModal = () => {
@@ -79,9 +81,39 @@ class MovementCreateModal extends Component {
     }
 
     datePickerChange = date => {
-        alert("foi")
-        console.log(date)
+        this.setState({
+            date: date.toISOString()
+        })
     }
+
+    amountChange = e => {
+        let amount = e.target.value
+        this.setState({
+            amount
+        })
+    }
+    
+    saveMovement = e => {
+        e.preventDefault()
+        this.setState({
+            loading: true
+        })
+        setTimeout(() => {
+
+            this.jwtHelper.fetchJWTPromise(url("movements/"), 'post', {
+                ...this.state
+            }).then(r => {
+                M.toast({ html: r.message })
+                this.closeModal()
+                // this.props.listCategories()
+            }).catch(r => {
+                M.toast({ html: r.message })
+                this.closeModal()
+            })
+        }, 1000);
+        console.log(this.state)
+    }
+
 
     render() {
         return (
@@ -103,22 +135,34 @@ class MovementCreateModal extends Component {
                         </div>
 
                         <div className="input-field col s4">
-                            <input type="number"/>
+                            <input onChange={ e => this.amountChange(e)} ref={input => this.amountInput = input} type="number"/>
                             <label>Amount</label>
                         </div>
                     </div>
                     
                 </div>
                 <div className="modal-footer">
-                    <a href="#" disabled={this.state.type == ""} className="waves-effect waves-green btn-flat">Save</a>
+                    <a href="#" disabled={this.state.type == ""} onClick={e => this.saveMovement(e)} className="waves-effect waves-green btn-flat">Save</a>
                 </div>
                 {this.state.loading ? (<div className="progress"><div className="indeterminate"></div></div>) : null}
 
             </div>
         )
     }
-
-
 }
 
-export default MovementCreateModal
+const mapStateToProps = state => {
+    return {
+      user: state.auth.user
+    }
+  }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        login: (user) => dispatch(actions.login(user)),
+        
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(MovementCreateModal)
