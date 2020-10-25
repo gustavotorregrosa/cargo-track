@@ -4,12 +4,14 @@ import 'materialize-css/dist/css/materialize.min.css'
 import * as actions from '../../../store/actions/index'
 import { url, JWTHelper } from '../../../support/misc'
 import M from 'materialize-css'
+import products from '../products/products'
 
 class MovementCreateModal extends Component {
 
 
     state = {
         loading: false,
+        productID: null,
         type: '',
         date: '',
         amount: 0,
@@ -42,6 +44,7 @@ class MovementCreateModal extends Component {
         this.selectInstance = M.FormSelect.init(this.selectElem, {})
 
         this.datePickerInstance = M.Datepicker.init(this.datePickerElem, {
+            minDate: new Date(),
             onOpen: () => {
                 this.elem.style.height = '60%'
             },
@@ -53,8 +56,6 @@ class MovementCreateModal extends Component {
             onSelect: d => {
                 this.datePickerChange(d)
             }
-
-
         })
 
         this.props.setOpenModal(this.openModal)
@@ -62,8 +63,17 @@ class MovementCreateModal extends Component {
         this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))
     }
 
-    openModal = () => {
+
+    getUser = () => this.props.user
+
+    _login = user => this.props.login(user)
+
+
+    openModal = productID => {
         this.instance.open()
+        this.setState({
+            productID
+        })
     }
 
     closeModal = () => {
