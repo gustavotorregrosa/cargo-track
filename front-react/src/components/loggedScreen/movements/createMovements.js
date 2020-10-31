@@ -115,13 +115,12 @@ class MovementCreateModal extends Component {
             }).then(r => {
                 M.toast({ html: r.message })
                 this.closeModal()
-                // this.props.listCategories()
+                this.props.listMovements()
             }).catch(r => {
                 M.toast({ html: r.message })
                 this.closeModal()
             })
         }, 1000);
-        console.log(this.state)
     }
 
 

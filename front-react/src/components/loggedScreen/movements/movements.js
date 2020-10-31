@@ -103,8 +103,8 @@ class Movements extends Component {
                         </tbody>
                     </table>
                 </div>
-                <DeleteMovementModal setOpenModal={f => this.childOpenModalDeleteMovement = f} />
-                <MovementCreateModal setOpenModal={f => this.childOpenModalCreateMovement = f} />
+                <DeleteMovementModal listMovements={() => this.listMovements()} setOpenModal={f => this.childOpenModalDeleteMovement = f} />
+                <MovementCreateModal listMovements={() => this.listMovements()} setOpenModal={f => this.childOpenModalCreateMovement = f} />
             </div>
         )
     }

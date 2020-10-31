@@ -63,7 +63,7 @@ class ModalDeleteMovement extends Component {
             this.jwtHelper.fetchJWTPromise(url("movements/" + this.state.id), 'delete').then(r => {
                 M.toast({ html: r.message })
                 this.closeModal()
-                // this.props.listCategories()
+                this.props.listMovements()
             }).catch(r => {
                 M.toast({ html: r.message })
                 this.closeModal()
