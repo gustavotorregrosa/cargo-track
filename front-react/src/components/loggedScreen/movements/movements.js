@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import MovementCreateModal from './createMovements'
 import DeleteMovementModal from './modalDeleteMovement'
+import ModalChart from './modalChart'
 import { Route, Switch, withRouter, Redirect } from 'react-router-dom'
 import { url, JWTHelper } from '../../../support/misc'
 import { connect } from 'react-redux'
@@ -10,7 +11,8 @@ class Movements extends Component {
 
     state = {
         product: null,
-        movements: null
+        movements: null,
+        productName: null
     }
 
     getUser = () => this.props.user
@@ -23,8 +25,19 @@ class Movements extends Component {
         this.jwtHelper = new JWTHelper(() => this.getUser(), (user) => this._login(user))
         setTimeout(() => {
             this.listMovements()
+            this.getProductName()
         }, 100)
- 
+    }
+
+    getProductName = () => {
+        const product = this.props.match.params.productID
+        this.jwtHelper.fetchJWTPromise(url("products/" + product)).then(response => {
+            console.log(response)
+            this.setState({
+                productName: response.name
+            })
+        })
+
 
     }
 
@@ -61,7 +74,10 @@ class Movements extends Component {
         this.childOpenModalCreateMovement(this.state.product)
     }
 
-    
+    openModalChart = e => {
+        e.preventDefault()
+        this.childOpenModalChart(this.state.product)
+    }
 
 
     render(){
@@ -71,8 +87,15 @@ class Movements extends Component {
                 <br/>
 
                 <div className="row">
-                    <div className="col s5"><h5>Movements</h5></div>
-                    <div className="col s6"><h5>{this.state.product && (this.state.product.name)}</h5></div>
+                    <div className="col s3"><h4>Movements</h4></div>
+                    <div className="col s3"><h4>{this.state.productName}</h4></div>
+                    <div className="col offset-s4 s1">
+                        <a
+                            onClick={e => this.openModalChart(e)}
+                            style={{
+                                marginTop: "1em"
+                            }} className="btn-floating btn-large waves-effect waves-light blue"><i className="material-icons">timeline</i></a>
+                    </div>  
                     
                     <div className="col s1">
                         <a
@@ -105,6 +128,7 @@ class Movements extends Component {
                 </div>
                 <DeleteMovementModal listMovements={() => this.listMovements()} setOpenModal={f => this.childOpenModalDeleteMovement = f} />
                 <MovementCreateModal listMovements={() => this.listMovements()} setOpenModal={f => this.childOpenModalCreateMovement = f} />
+                <ModalChart setOpenModal={f => this.childOpenModalChart = f}  />
             </div>
         )
     }

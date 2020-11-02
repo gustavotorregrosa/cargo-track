@@ -23,6 +23,37 @@ exports.listMovements = (req, res, next) => {
     }).then(moviments => res.send({moviments}))
 }
 
+exports.listPositions = (req, res, next) => {
+
+    const productId = req.params.productId
+    Movement.findAll({
+        attributes: ['id', 'productId', 'type', 'dueDate', 'amount'],
+        order: ['dueDate'],
+        where: {
+            productId
+        }
+    }).then(moviments => {
+        let currentValue = 0
+        let positions = []
+        moviments.map(moviment => {
+            if(moviment.type == 'buy'){
+                currentValue = currentValue + moviment.amount
+            }else {
+                currentValue = currentValue - moviment.amount
+            }
+
+            positions.push({
+                date: moviment.dueDate,
+                value: currentValue
+            })
+        })
+
+        res.send({positions})
+    })
+
+}
+
+
 exports.deleteMovement = (req, res, next) => {
     const id = req.params.productId
 

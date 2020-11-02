@@ -9,6 +9,20 @@ exports.listProducts = (req, res, next) => {
     }).then(products => res.send(products))
 }
 
+
+
+exports.getProduct = (req, res, next) => {
+    const productId = req.params.id
+    Product.findOne({
+        attributes: ['id', 'name', 'categoryId'],
+        // include: Category
+        where: {
+            id: productId
+        }
+
+    }).then(product => res.send(product))
+}
+
 exports.listCategoriesWithProducts = (req, res, next) => {
     Category.findAll({
         attributes: ['id', 'name'],
