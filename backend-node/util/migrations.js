@@ -4,6 +4,7 @@ const Product = require('../model/Product')
 const Movement = require('../model/Movement')
 
 const migrate = () => {
+    console.log("foi...")
     User.sync().then(r => console.log('table user created'))
     Category.sync().then(r => 
         {

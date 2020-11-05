@@ -1,9 +1,8 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const migrate = require('./util/migrations')
 const app = express()
-const port = 3001
+const port = 4200
 
 const authRoutes = require('./routes/auth')
 const categoryRoutes = require('./routes/category')
@@ -22,12 +21,14 @@ app.use((req, res, next) => {
     next();
 });
 
+app.get('/', (req, res, next) => {
+    res.send('Im alive')
+})
+
 app.use('/auth', authRoutes)
 app.use('/categories', categoryRoutes)
 app.use('/products', productRoutes)
 app.use('/movements', movementRoutes)
 
-
-migrate()
 
 app.listen(port)

@@ -1,7 +1,6 @@
 version: '3'
 services:
 
-    
     db:
         image: postgres
         container_name: postgres
@@ -9,6 +8,7 @@ services:
         tty: true
         environment:
             POSTGRES_PASSWORD: "gustavo01"
+            POSTGRES_DB: "cargotrack"
         ports:
             - "15432:5432"
 
@@ -21,3 +21,32 @@ services:
             - "16543:80"
         depends_on:
             - db
+
+    react:
+        build: 
+            dockerfile: ./react.dockerfile
+            context: .
+        volumes:
+            - './front-react:/app'
+            - '/app/node_modules'
+        environment:
+            - NODE_ENV=development
+            - CI=true
+        ports:
+            - 3001:3000
+
+    node:
+        build: 
+            dockerfile: ./node.dockerfile
+            context: .
+        volumes:
+            - './backend-node:/home/node/app'
+            - '/home/node/app/node_modules'
+        environment:
+            - NODE_ENV=development
+            - CI=true
+        ports:
+            - 3002:4200
+        depends_on:
+            - db
+    

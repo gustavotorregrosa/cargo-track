@@ -1,6 +1,6 @@
 import categories from "../components/loggedScreen/categories/categories"
 
-export const url = path => 'http://localhost:3001/' + path
+export const url = path => 'http://localhost:3002/' + path
 
 export class JWTHelper {
 
